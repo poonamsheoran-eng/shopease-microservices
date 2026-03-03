@@ -1,192 +1,125 @@
-📐 ShopEase – System Architecture
-1️⃣ High-Level Architecture Overview
+Shopease – System Architecture
+1️⃣ High-Level Flow
+Browser
+   ↓
+HTML / JavaScript (Frontend)
+   ↓
+FastAPI Backend (Port 8000)
+   ↓
+PostgreSQL (Port 5432)
+   ↓
+Redis (Port 6379 - caching layer)
+Flow Explanation
 
-ShopEase follows a layered microservices architecture with caching and persistent storage.
+User interacts with the browser.
 
-User
-  │
-  ▼
-Frontend (Port: 3000)
-  │
-  ▼
-Backend API (Port: 5000)
-  │
-  ├──────────────► PostgreSQL (Port: 5432)
-  │
-  └──────────────► Redis (Port: 6379)
-2️⃣ Component Description
-🧑 User
+Frontend (HTML/JS) sends HTTP requests to backend.
 
-End user accessing the platform via browser or mobile device.
-
-🎨 Frontend Service
-
-Technology: React / Next.js
-
-Runs on: Port 3000
-
-Responsibility:
-
-Render UI
-
-Call backend APIs
-
-Handle authentication tokens
-
-Manage client-side state
-
-Communication:
-
-HTTP/HTTPS → Backend API
-
-🧠 Backend API
-
-Technology: Node.js + Express
-
-Runs on: Port 5000
-
-Responsibility:
-
-Authentication
-
-Business logic
-
-Order processing
-
-Product management
-
-Database operations
-
-Cache interaction
-
-Dependencies:
-
-PostgreSQL (primary database)
-
-Redis (caching + session storage)
-
-🗄 PostgreSQL Database
-
-Port: 5432
-
-Role: Persistent data storage
-
-Stores:
-
-Users
-
-Orders
-
-Products
-
-Transactions
-
-Data Characteristics:
-
-ACID compliant
-
-Relational schema
-
-Indexed for performance
-
-⚡ Redis
-
-Port: 6379
-
-Role: In-memory cache
-
-Used for:
-
-Session storage
-
-Caching product queries
-
-Rate limiting
-
-Reducing DB load
-
-3️⃣ Architecture Flow (Detailed)
-🔄 Request Lifecycle
-
-User sends request from browser
-
-Frontend (3000) calls Backend API (5000)
+Backend (FastAPI) processes request.
 
 Backend:
 
-Checks Redis cache
+Reads/writes to PostgreSQL
 
-If cache miss → queries PostgreSQL
+Uses Redis for caching frequently accessed data
 
-Stores response in Redis
+2️⃣ Technology Components
+Backend
 
-Response sent back to frontend
+Python
 
-UI updated
+FastAPI
 
-4️⃣ Network Design (Container Perspective)
+Uvicorn (ASGI server)
 
-In Docker/Kubernetes environment:
+Database
 
-All services run inside isolated containers
+PostgreSQL (primary relational database)
 
-Communication happens via internal service DNS
+Cache
 
-Only frontend and backend are exposed externally
+Redis (in-memory caching, session storage, rate limiting)
 
-PostgreSQL and Redis remain internal services
+Frontend (Phase 1)
 
-Example (Docker Compose networking):
+HTML
 
-frontend → backend (http://backend:5000
-)
+JavaScript
 
-backend → postgres (postgres:5432)
+Simple static server (later)
 
-backend → redis (redis:6379)
+3️⃣ Port Configuration
+Component	Port
+Backend API	8000
+PostgreSQL	5432
+Redis	6379
+Frontend	3000 (later phase)
 
-5️⃣ Port Configuration Summary
-Service	Port	Exposure Type
-Frontend	3000	Public
-Backend	5000	Public
-PostgreSQL	5432	Internal Only
-Redis	6379	Internal Only
-6️⃣ Scalability Strategy (Future Design)
+All ports will be configurable via environment variables in production.
 
-Horizontal scaling of backend containers
+4️⃣ Current Deployment Strategy (Phase 1)
 
-Redis for reducing database load
+Single server deployment
 
-Read replicas for PostgreSQL (future stage)
+All services run locally
 
-Kubernetes HPA for auto-scaling
+No load balancer
 
-Load balancer before backend
+No reverse proxy yet
 
-7️⃣ Production Considerations
+Direct browser → backend communication
 
-Security:
+This keeps development simple while preserving production structure.
 
-JWT-based authentication
+5️⃣ Future Scaling Plan
+Phase 2 – Dockerization
 
-Environment variables for secrets
+Containerize:
 
-DB not publicly exposed
+Backend
 
-Rate limiting via Redis
+PostgreSQL
 
-Reliability:
+Redis
 
-Health check endpoints
+Use Docker Compose for local multi-service orchestration
 
-Retry mechanisms
+Phase 3 – Reverse Proxy
 
-Graceful shutdown support
+Add Nginx in front
 
-Observability (Next Phase):
+Route traffic to backend
 
-Logging
+Handle HTTPS
 
-Metrics
+Phase 4 – Cloud Deployment
 
-Distributed tracing
+Deploy containers to:
+
+AWS ECS (initial cloud)
+
+Later migrate to Kubernetes (EKS)
+
+Phase 5 – Horizontal Scaling
+
+When traffic increases:
+
+Run multiple backend instances
+
+Introduce load balancer
+
+Redis becomes shared cache
+
+PostgreSQL moved to managed service
+
+6️⃣ Production Engineering Notes
+
+Backend must remain stateless.
+
+Configuration via environment variables.
+
+Secrets must not be committed to Git.
+
+Health endpoint required for container orchestration.
+
+Logs must be structured (JSON format in future).

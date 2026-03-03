@@ -1,61 +1,38 @@
-ShopEase Microservices Platform
-📌 Project Overview
+Shopease Microservices Architecture
+📌 Overview
 
-ShopEase is a production-style e-commerce microservices platform designed to simulate a real-world DevOps and SRE environment.
+Shopease is a microservices-based e-commerce backend designed with production-grade DevOps practices.
 
-The system is built using containerized microservices architecture and deployed via CI/CD pipelines.
+This project simulates a real-world deployment architecture including:
 
-This project demonstrates:
+Containerization
 
-Git branching strategy
-
-Docker containerization
-
-CI/CD automation
+CI/CD
 
 Infrastructure as Code
 
-Kubernetes orchestration
+Monitoring & Observability
 
-Production-ready architecture design
+Kubernetes deployment (future phase)
 
-🏗 Architecture Overview
-                    +-------------------+
-                    |     Frontend      |
-                    |  (React / Next)   |
-                    +---------+---------+
-                              |
-                              |
-                    +---------v---------+
-                    |     API Gateway   |
-                    +----+---------+----+
-                         |         |
-           +-------------+         +-------------+
-           |                                   |
-+----------v----------+              +---------v----------+
-|  Auth Service       |              |  Product Service   |
-+---------------------+              +--------------------+
-           |
-+----------v----------+
-|  Order Service      |
-+---------------------+
-
-All services run in Docker containers
-Orchestrated via Kubernetes
-🧱 Tech Stack
-Frontend
-
-React / Next.js
-
+🛠 Tech Stack
 Backend
 
-Node.js
+Python (FastAPI)
 
-Express
+PostgreSQL
 
-REST APIs
+Redis (future)
 
-DevOps
+Docker
+
+Frontend
+
+HTML / JavaScript (Phase 1)
+
+React (Future upgrade)
+
+DevOps & Infra
 
 Docker
 
@@ -63,33 +40,37 @@ Docker Compose
 
 GitHub Actions
 
-Kubernetes
+AWS (ECS / EKS – later phase)
 
-Terraform (later stage)
+Terraform (future)
 
-Cloud
+Nginx (reverse proxy)
 
-AWS (EC2, ECR, EKS)
+🔌 Default Ports
+Service	Port
+Backend API	8000
+Frontend	3000
+PostgreSQL	5432
+Redis	6379
+🔁 High-Level Architecture Flow
+User
+  ↓
+Frontend (Browser)
+  ↓
+Backend API (FastAPI)
+  ↓
+PostgreSQL
 
-🚀 DevOps Capabilities Implemented
+Future enhancement:
 
-Multi-branch Git workflow
-
-CI pipeline on every pull request
-
-Docker multi-stage builds
-
-Image push to container registry
-
-Kubernetes deployment manifests
-
-Infrastructure automation
-
-📂 Repository Structure
-frontend/    → UI application
-backend/     → Microservices
-infra/       → Docker + Kubernetes configs
-docs/        → Architecture documentation
-🎯 Goal
-
-To simulate how a real production DevOps team builds, deploys, and maintains scalable microservices systems.
+User
+ ↓
+Nginx
+ ↓
+Frontend
+ ↓
+Backend
+ ↓
+Postgres
+ ↓
+Redis (cache)
